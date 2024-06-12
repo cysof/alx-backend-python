@@ -1,34 +1,38 @@
-#!/urs/bin/env python3
-from random import uniform
+#!/usr/bin/env python3
+
+""" Module that contains a coroutine named measure_runtime
+that will execute async_comprehension four times in parallel
+using asyncio.gather.
+Coroutine will measure the total runtime and return it.
+Explanation for how the total runtime is 10 seconds or less
+should be included in the documentation.
+"""
+
 import asyncio
-from typing import Generator, List
 from time import time
+from random import uniform
+from typing import Generator, List
+
 async_comprehension = __import__('1-async_comprehension').async_comprehension
 
+
 async def measure_runtime() -> float:
+    """ Async Coroutine function that will execute async_comprehension
+    four times in parallel using asyncio.gather.
+    Coroutine will measure the total runtime and return it.
     """
-    Asynchronously measures the runtime of the `async_comprehension` function by executing it 4 times concurrently.
-
-    Returns:
-        float: The total runtime in seconds.
+    start_timeOfExec = time()
+    async_exec = [async_comprehension() for num in range(4)]
+    result = await asyncio.gather(*async_exec)
+    end_timeOfExec = time()
+    """ Total runtime explanation:
+    - Each call to async_comprehension waits for approximately 10 seconds
+        because it awaits 10 asynchronous sleeps of 1 second each in the
+        async_generator.
+    - Since measure_runtime executes async_comprehension four times
+        in parallel using asyncio.gather, the total runtime is roughly
+        10 seconds, as each call to async_comprehension takes approximately
+        10 seconds to complete.
+    - Therefore, the total runtime is approximately 10 seconds.
     """
-    start_time = time()
-    async_ = [async_comprehension() for numb in range(4)]
-    result = await asyncio.gather(*async_)
-    end_time = time()
-
-    """
-    This code snippet defines an asynchronous function 
-    called measure_runtime that measures the runtime of 
-    the async_comprehension function. It does this by executing 
-    async_comprehension four times concurrently 
-    using the asyncio.gather function. The function starts a 
-    timer before executing the async_comprehension function,
-    then waits for all the concurrent executions to complete 
-    using await asyncio.gather(*async_). Finally, it stops the timer 
-    using the time function and calculates the total runtime in seconds. 
-    The function returns the total runtime as a float."""
-
-    return end_time - start_time 
-
-
+    return end_timeOfExec - start_timeOfExec
